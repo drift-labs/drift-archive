@@ -20,21 +20,11 @@ pub fn archive_user<'info>(ctx: Context<'_, '_, '_, 'info, ArchiveUser<'info>>) 
 }
 
 #[derive(Accounts)]
-#[instruction(
-    sub_account_id: u16,
-)]
 pub struct ArchiveUser<'info> {
-    #[account(
-        constraint = drift_state.signer == *drift_signer.key,
-    )]
     pub drift_state: Box<Account<'info, State>>,
-    #[account(
-        constraint = drift_user.load()?.sub_account_id == sub_account_id,
-    )]
     pub drift_user: AccountLoader<'info, User>,
     #[account(mut)]
     payer: Signer<'info>,
-    drift_signer: Signer<'info>,
     #[account(
         init,
         seeds = [b"user",  drift_user.load()?.authority.as_ref(), drift_user.load()?.sub_account_id.to_le_bytes().as_ref()],
